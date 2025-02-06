@@ -1,5 +1,4 @@
 local Clickable = require("UI.elements.control.Clickable")
-local Thread = require("thread")
 ---@class Button : Clickable
 ---@field onClickAction function
 ---@field onClickColor number
