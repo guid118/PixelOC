@@ -4,12 +4,12 @@ local Clickable = require("UI.elements.control.Clickable")
 local CheckBox = setmetatable({}, { __index = Clickable })
 CheckBox.__index = CheckBox
 
-function CheckBox:new(x, y, width, height, color, isPallette, isEnabled)
+function CheckBox.new(x, y, width, height, color, isPallette, isEnabled)
     local obj
     if (isEnabled) then
-        obj = Clickable.new(self, x, y, width, height, color, isPallette, "✔")
+        obj = Clickable.new(x, y, width, height, color, isPallette, "✔")
     else
-        obj = Clickable.new(self, x, y, width, height, color, isPallette, "✖")
+        obj = Clickable.new(x, y, width, height, color, isPallette, "✖")
     end
     setmetatable(obj, CheckBox)
     obj.isEnabled = true
@@ -17,14 +17,15 @@ function CheckBox:new(x, y, width, height, color, isPallette, isEnabled)
 end
 
 function CheckBox:onClick()
-    print(self.isEnabled)
     if (self.isEnabled) then
         self.isEnabled = false
         self.label = "✖"
+        self:draw()
         return
     else
         self.isEnabled = true
         self.label = "✔"
+        self:draw()
     end
 end
 

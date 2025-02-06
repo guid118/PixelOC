@@ -6,7 +6,7 @@ local Region = require("UI.elements.Region")
 local ColoredRegion = setmetatable({}, { __index = Region })
 ColoredRegion.__index = ColoredRegion
 
-function ColoredRegion:new(x, y, width, height, color, isPallette)
+function ColoredRegion.new(x, y, width, height, color, isPallette)
     local obj = Region.new(x,y,width,height)
     setmetatable(obj, ColoredRegion)
     obj.color = color or 0xFFFFFF

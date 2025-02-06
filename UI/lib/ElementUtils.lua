@@ -13,9 +13,13 @@ function ElementUtils.inheritsFrom(obj, base)
         if mt == base then
             return true
         end
-        mt = getmetatable(mt).__index -- Move up the inheritance chain
+        mt = getmetatable(mt) -- Get the metatable of the current metatable
+        if mt then
+            mt = mt.__index -- Move up the inheritance chain
+        end
     end
     return false
 end
+
 
 return ElementUtils

@@ -1,20 +1,20 @@
 local gpu = require("component").gpu
-local Region = require("UI.elements.Region")
+local ColoredRegion = require("UI.elements.ColoredRegion")
 
 ---@class Labeled: Region
 ---@field label string
-local Labeled = setmetatable({}, { __index = Region })  -- Correct inheritance setup
+local Labeled = setmetatable({}, { __index = ColoredRegion })  -- Correct inheritance setup
 Labeled.__index = Labeled
 
-function Labeled:new(x, y, width, height, color, isPallette, label)
-    local obj = Region.new(self, x, y, width, height, color, isPallette)
+function Labeled.new(x, y, width, height, color, isPallette, label)
+    local obj = ColoredRegion.new(x, y, width, height, color, isPallette)
     setmetatable(obj, Labeled)  -- Set metatable to Labeled for the instance
     obj.label = label or ""
     return obj
 end
 
 function Labeled:draw()
-    Region.draw(self)  -- Call parent draw method
+    ColoredRegion.draw(self)
     gpu.set(
             math.floor((self.x + self.width / 2) - (#self.label / 2)),
             math.floor(self.y + self.height / 2),
