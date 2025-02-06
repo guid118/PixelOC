@@ -1,18 +1,14 @@
 local gpu = require("component").gpu
 local Region = require("UI.elements.Region")
 ---@class ColoredRegion:Region
----@field x number
----@field y number
----@field width number
----@field height number
 ---@field color number
 ---@field isPallette boolean
-local ColoredRegion = setmetatable({}, { __index = Region })  -- Correct inheritance setup
+local ColoredRegion = setmetatable({}, { __index = Region })
 ColoredRegion.__index = ColoredRegion
 
 function ColoredRegion:new(x, y, width, height, color, isPallette)
-    local obj = ColoredRegion.new(x,y,width,height)
-    setmetatable(obj, Region)
+    local obj = Region.new(x,y,width,height)
+    setmetatable(obj, ColoredRegion)
     obj.color = color or 0xFFFFFF
     obj.isPallette = isPallette or false
     return obj
