@@ -17,4 +17,15 @@ function Region.new(x,y,width,height)
     return obj
 end
 
+function Region:isCoordinateInRegion(x,y)
+    local xmax = self.x + self.width - 1
+    local ymax = self.y + self.height - 1
+    if x >= self.x and x <= xmax then
+        if y >= self.y and y <= ymax then
+            return true
+        end
+    end
+    return false
+end
+
 return Region
