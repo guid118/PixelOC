@@ -6,12 +6,12 @@ CheckBox.__index = CheckBox
 
 --- Constructor for the CheckBox class
 --- @return CheckBox a new CheckBox
-function CheckBox.new(x, y, width, height, color, isPallette, isEnabled)
+function CheckBox.new(x, y, width, height, color, ispalette, isEnabled)
     local obj
     if (isEnabled) then
-        obj = Clickable.new(x, y, width, height, color, isPallette, "✔")
+        obj = Clickable.new(x, y, width, height, color, ispalette, "✔")
     else
-        obj = Clickable.new(x, y, width, height, color, isPallette, "✖")
+        obj = Clickable.new(x, y, width, height, color, ispalette, "✖")
     end
     setmetatable(obj, CheckBox)
     obj.isEnabled = true

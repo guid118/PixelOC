@@ -7,8 +7,8 @@ Label.__index = Label
 
 --- Constructor for the Label class
 --- @return Label a new Label
-function Label.new(x, y, width, height, color, isPallette, label)
-    local obj = ColoredRegion.new(x, y, width, height, color, isPallette)
+function Label.new(x, y, width, height, color, ispalette, label)
+    local obj = ColoredRegion.new(x, y, width, height, color, ispalette)
     setmetatable(obj, Label)  -- Set metatable to Label for the instance
     obj.label = label or ""
     return obj

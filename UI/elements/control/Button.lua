@@ -6,8 +6,8 @@ Button.__index = Button
 
 --- Constructor for the Button class
 ---@return Button a new Button
-function Button.new(x, y, width, height, color, isPallette, label, onClickAction, ...)
-    local obj = Clickable.new(x, y, width, height, color, isPallette, label)
+function Button.new(x, y, width, height, color, ispalette, label, onClickAction, ...)
+    local obj = Clickable.new(x, y, width, height, color, ispalette, label)
     setmetatable(obj, Button)  -- Set metatable to Label for the instance
     obj.onClickAction = onClickAction
     obj.clickArguments = { ... }
