@@ -47,14 +47,21 @@ function TextField:handleKeyDown(char, code)
     end
     if code == 28 then
         -- Enter key (submit)
+
         self:setLabel(self.label)
         self:unregisterListeners()
     elseif code == 14 then
         -- Backspace key
-        self.label = self.label:sub(1, self.cursorLocationX - 1) .. self.label:sub(self.cursorLocationX + 1)
-        self.cursorLocationX = self.cursorLocationX - 1
+        if self.cursorLocationX > 0 then
+            self.label = self.label:sub(1, self.cursorLocationX - 1) .. self.label:sub(self.cursorLocationX + 1)
+            self.cursorLocationX = self.cursorLocationX - 1
+        end
     elseif code == 211 then
+        -- Delete key
         self.label = self.label:sub(1, self.cursorLocationX) .. self.label:sub(self.cursorLocationX + 2)
+        if self.cursorLocationX < self.label:len() and self.cursorLocationX > 0 then
+            self.cursorLocationX = self.cursorLocationX - 1
+        end
     elseif code == 203 then
         --left
         if (self.cursorLocationX > 0) then
@@ -71,9 +78,11 @@ function TextField:handleKeyDown(char, code)
         self:blinkCursor()
     elseif char > 0 then
         -- Ensure valid printable characters
-        if string.len(self.label) < self.width then
+        if self.label:len() < self.width then
             self.label = self.label:sub(1, self.cursorLocationX) .. string.char(char) .. self.label:sub(self.cursorLocationX + 1)
-            self.cursorLocationX = self.cursorLocationX + 1
+            if self.cursorLocationX < self.width-1 then
+                self.cursorLocationX = self.cursorLocationX + 1
+            end
         end
     end
     self:draw()
