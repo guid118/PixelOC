@@ -1,6 +1,5 @@
 local event = require("event")
 
-
 ---@class Region
 ---@field x number
 ---@field y number
@@ -37,10 +36,12 @@ end
 --- unregister all listeners in the eventListeners list
 --- classes may have to unregister timers and other event listeners not in the list themselves
 function Region:unregisterListeners()
-    for eventType, listener in pairs(self.eventListeners) do
-        event.ignore(eventType, listener)
+    if (self.eventListeners) then
+        for eventType, listener in pairs(self.eventListeners) do
+            event.ignore(eventType, listener)
+        end
+        self.eventListeners = {}
     end
-    self.eventListeners = {}
 end
 
 return Region
