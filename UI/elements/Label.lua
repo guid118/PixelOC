@@ -17,6 +17,7 @@ end
 --- Draw the Label
 function Label:draw()
     ColoredRegion.draw(self)
+    gpu.setForeground(0xFFFFFF)
     gpu.set(
             math.floor((self.x + self.width / 2) - (#self.label / 2)),
             math.floor(self.y + self.height / 2),
