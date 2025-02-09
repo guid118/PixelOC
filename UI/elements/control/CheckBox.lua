@@ -14,7 +14,7 @@ function CheckBox.new(x, y, width, height, color, ispalette, isEnabled)
         obj = Clickable.new(x, y, width, height, color, ispalette, "✖")
     end
     setmetatable(obj, CheckBox)
-    obj.isEnabled = true
+    obj.isEnabled = isEnabled
     return obj
 end
 

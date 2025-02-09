@@ -16,8 +16,8 @@ end
 
 --- Normal constructor for the Pane class
 --- @return Pane a new Pane
-function Pane.new(x, y, height, width)
-    local obj = Region.new(x, y, height, width)
+function Pane.new(x, y, width, height)
+    local obj = Region.new(x, y, width, height)
     setmetatable(obj, Pane)
     obj.isEnabled = false;
     return obj
