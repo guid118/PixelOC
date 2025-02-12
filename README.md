@@ -14,7 +14,6 @@ Currently there is no releases yet, since I've only just started work on the lib
 
 ### What is to come?
 My current to do list is very long, but notable features include:
-- Shifting to a system where panes are necessary to show anything, thus eliminating the need for elements to know where they are located.
 - TabPane and ScrollPane additions
 - Color utils, so you can easily use colors from the default colors, and edit the 16 palette colors.
 - Debug utils, so print statements don't break the UI
