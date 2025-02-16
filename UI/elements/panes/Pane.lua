@@ -6,7 +6,6 @@ local ElementUtils = require("UI.lib.ElementUtils")
 local Pane = setmetatable({}, { __index = Region })
 Pane.__index = Pane
 
-
 --- Default constructor for the Pane class
 --- @return Pane a new Pane that spans across the whole screen
 function Pane.new()
@@ -25,9 +24,12 @@ function Pane.new(x, y, width, height)
 end
 
 --- Add a region inheriting class to the pane
+--- Coordinates of the region will be local coordinates in the pane (so region.x = region.x + pane.x and the same for y)
 --- Given argument MUST INHERIT FROM REGION, or this will cause a crash when drawn!
 --- @param RegionInheritor Region to add to the pane.
 function Pane:add(RegionInheritor)
+    RegionInheritor.x = RegionInheritor.x + self.x
+    RegionInheritor.y = RegionInheritor.y + self.y
     table.insert(self.content, RegionInheritor)
 end
 
@@ -43,6 +45,9 @@ end
 --- Draw function for the pane, will not draw anything if getVisible is false
 function Pane:draw()
     if (self.isEnabled) then
+        gpu.setForeground(0x000000, false)
+        gpu.setBackground(0x000000, false)
+        gpu.fill(self.x, self.y, self.width, self.height, " ")
         for _, item in ipairs(self.content) do
             item:draw()
         end
@@ -55,11 +60,18 @@ function Pane:getVisbible()
     return self.isEnabled
 end
 
---- Getter for the self.content of the pane
---- mostly useful for determining what was pressed within the pane
---- @return table all self.content of the pane
-function Pane:getContent()
-    return self.content
+--- Get the clickable that is at the given coordinates
+--- @return Clickable of the pane at the given coordinates.
+function Pane:getClickableAt(x, y)
+    if (x < self.x + self.width and x > self.x and y < self.y + self.height and y > self.y) then
+        for _, item in ipairs(self.content) do
+            if (ElementUtils.inheritsFrom(item, Pane)) then
+                return item:getClickableAt(x,y)
+            elseif ElementUtils.inheritsFrom(item, Clickable) then
+                return item
+            end
+        end
+    end
 end
 
 function Pane:unregisterListeners()
