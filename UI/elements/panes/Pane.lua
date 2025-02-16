@@ -1,6 +1,7 @@
 local Region = require("UI.elements.Region")
 local gpu = require("component").gpu
 local ElementUtils = require("UI.lib.ElementUtils")
+local Clickable = require("UI.elements.control.Clickable")
 
 ---@class Pane:Region
 local Pane = setmetatable({}, { __index = Region })
@@ -28,8 +29,8 @@ end
 --- Given argument MUST INHERIT FROM REGION, or this will cause a crash when drawn!
 --- @param RegionInheritor Region to add to the pane.
 function Pane:add(RegionInheritor)
-    RegionInheritor.x = RegionInheritor.x + self.x
-    RegionInheritor.y = RegionInheritor.y + self.y
+    RegionInheritor.x = RegionInheritor.x + self.x - 1
+    RegionInheritor.y = RegionInheritor.y + self.y - 1
     table.insert(self.content, RegionInheritor)
 end
 
@@ -63,12 +64,14 @@ end
 --- Get the clickable that is at the given coordinates
 --- @return Clickable of the pane at the given coordinates.
 function Pane:getClickableAt(x, y)
-    if (x < self.x + self.width and x > self.x and y < self.y + self.height and y > self.y) then
+    if (self:isCoordinateInRegion(x, y)) then
         for _, item in ipairs(self.content) do
             if (ElementUtils.inheritsFrom(item, Pane)) then
-                return item:getClickableAt(x,y)
+                return item:getClickableAt(x, y)
             elseif ElementUtils.inheritsFrom(item, Clickable) then
-                return item
+                if (item:isCoordinateInRegion(x, y)) then
+                    return item
+                end
             end
         end
     end
