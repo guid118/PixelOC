@@ -1,5 +1,7 @@
 ## Welcome to PixelOC!
 ### <font color="red"> Please note that there will be program-breaking changes, so please carefully read the changelog before updating! </font>
+### I have not yet made any releases or changelog, since the library is not ready for use. most of the information below will be irrelevant or simply incorrect.
+### If you still want to make use of what I have made up until now, you should already know how to get it running. If you don't, I'd highly recommend waiting a bit until I think its ready for actual use.
 ### What is this?
 PixelOC is a graphics library for OpenComputers.
 The library is specifically made and tested on GregTech: New Horizons' version of OpenComputers, but might work for other versions as well, I don't know.
