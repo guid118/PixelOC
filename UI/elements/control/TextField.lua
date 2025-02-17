@@ -9,8 +9,8 @@ TextField.__index = TextField
 
 --- Constructor for the TextField class
 --- @return TextField a new TextField
-function TextField.new(x, y, width, height, color, ispalette, defaultText)
-    local obj = Clickable.new(x, y, width, height, color, ispalette, defaultText)
+function TextField.new(x, y, width, height, color, isPalette, defaultText)
+    local obj = Clickable.new(x, y, width, height, color, isPalette, defaultText)
     setmetatable(obj, TextField)
     obj.focused = false
     obj.eventListeners = {}
@@ -108,12 +108,12 @@ function TextField:blinkCursor()
         local cursorPosY = self.y + (self.height / 2)
         if self.cursorVisible == true and cursorPosX < self.x + self.width then
             gpu.setForeground(0xFFFFFF, false)
-            gpu.setBackground(self.color, self.ispalette)
+            gpu.setBackground(self.color, self.isPalette)
             gpu.set(cursorPosX, cursorPosY, self:getCursorChar()) -- Draw cursor
             self.cursorVisible = false
         else
             gpu.setBackground(0xFFFFFF, false)
-            gpu.setForeground(self.color, self.ispalette)
+            gpu.setForeground(self.color, self.isPalette)
             gpu.set(cursorPosX, cursorPosY, self:getCursorChar()) -- Erase cursor
             self.cursorVisible = true
         end
