@@ -17,9 +17,15 @@ end
 --- Normal constructor for the Pane class
 --- @return Pane a new Pane
 function Pane.new(x, y, width, height)
+    return Pane.new(x,y,width,height, true)
+end
+
+--- Constructor for the Pane, with an extra isVisible field to set the default visibility
+--- @return Pane a new Pane
+function Pane.new(x, y, width, height, isVisible)
     local obj = Region.new(x, y, width, height)
     setmetatable(obj, Pane)
-    obj.isEnabled = false;
+    obj.isEnabled = isVisible;
     obj.content = {}
     return obj
 end
