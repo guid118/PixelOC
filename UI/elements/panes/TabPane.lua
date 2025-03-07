@@ -35,18 +35,23 @@ function TabPane:addTab(button, contentPane)
     button.y = 1
     button.width = button.label:len() + 2
     button.height = self.tabHeight
+    if (#self.tabPane.content == 0) then
+        button:toggleEnabled()
+    end
     self.tabPane:add(button)
     contentPane.x = self.x
     contentPane.y = self.y + self.tabHeight
     contentPane.width = self.width
     contentPane.height = self.height
     button:setOnClick(function()
-        pcall(function() self.currentTabButton:ToggleEnabled() end)
-        self.currentTabButton = button
-        button:toggleEnabled()
-        self.contentPane = contentPane
-        self:draw()
-        self.contentPane:draw()
+        if (self.currentTabButton ~= button) then
+            self.currentTabButton:toggleEnabled()
+            self.currentTabButton = button
+            button:toggleEnabled()
+            self.contentPane = contentPane
+            self:draw()
+            self.contentPane:draw()
+        end
     end)
 
 
