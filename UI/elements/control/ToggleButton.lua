@@ -39,17 +39,22 @@ function ToggleButton:toggleEnabled()
     end
 end
 
+function ToggleButton:setEnabled(newState)
+    if (self.isEnabled ~= newState) then
+        self:toggleEnabled()
+    end
+end
+
 --- Handles clicking the ToggleButton
 function ToggleButton:onClick()
     if self.onClickAction ~= nil then
         if pcall(self.onClickAction) then
             return
         end
+    else
+        self:toggleEnabled()
     end
-    self:toggleEnabled()
 end
-
-
 
 function ToggleButton:setOnClick(operation)
     self.onClickAction = operation
