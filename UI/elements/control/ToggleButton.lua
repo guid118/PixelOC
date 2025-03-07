@@ -17,11 +17,12 @@ function ToggleButton.new(x, y, width, height, ONColor, ONPalette, ONLabel, OFFC
     obj.isEnabled = isEnabled
     obj.ONButton = Clickable.new(x, y, width, height, ONColor, ONPalette, ONLabel)
     obj.OFFButton = Clickable.new(x, y, width, height, OFFColor, OFFPalette, OFFLabel)
+    obj.onClickAction = nil
     return obj
 end
 
---- Handles clicking the TextField
-function ToggleButton:onClick()
+--- Toggle the button as if it was pressed.
+function ToggleButton:toggleEnabled()
     if (self.isEnabled) then
         self.isEnabled = false
         self.color = self.OFFButton.color
@@ -37,4 +38,21 @@ function ToggleButton:onClick()
         self:draw()
     end
 end
+
+--- Handles clicking the ToggleButton
+function ToggleButton:onClick()
+    if self.onClickAction ~= nil then
+        if pcall(self.onClickAction) then
+            return
+        end
+    end
+    self:toggleEnabled()
+end
+
+
+
+function ToggleButton:setOnClick(operation)
+    self.onClickAction = operation
+end
+
 return ToggleButton
