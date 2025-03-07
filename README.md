@@ -18,7 +18,7 @@ Currently there is no releases yet, since I've only just started work on the lib
 My current to do list is very long, but notable features include:
 - ScrollPane addition
 - Color utils, so you can easily use colors from the default colors, and edit the 16 palette colors.
-- Debug utils, so print statements don't break the UI
+- Multi-line labels for Labeled regions
 - MANY bug fixes, the library is probably full of bugs that I have not yet found. (Did you find a bug? please [report](#i-found-a-bug-what-now) it!)
 - More, probably...
 
