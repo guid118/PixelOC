@@ -19,6 +19,7 @@ My current to do list is very long, but notable features include:
 - ScrollPane addition
 - Color utils, so you can easily use colors from the default colors, and edit the 16 palette colors.
 - Multi-line labels for Labeled regions
+- More efficient drawing of Panes, which should also only draw objects in their area, not outside of it
 - MANY bug fixes, the library is probably full of bugs that I have not yet found. (Did you find a bug? please [report](#i-found-a-bug-what-now) it!)
 - More, probably...
 
