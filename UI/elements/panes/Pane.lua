@@ -56,8 +56,8 @@ function Pane:draw()
         gpu.setBackground(0x000000, false)
         gpu.fill(self.x, self.y, self.width, self.height, " ")
         for _, item in ipairs(self.content) do
-            if (item.x >= self.x - 1 and item.x + item.width <= self.x + self.width - 1
-                    and item.y >= self.y - 1 and item.y + item.height <= self.y + self.height - 1 ) then
+            if (item.x >= self.x - 1 and item.x + item.width <= self.x + self.width
+                    and item.y >= self.y - 1 and item.y + item.height <= self.y + self.height) then
                 item:draw()
             end
         end
