@@ -17,7 +17,7 @@ end
 --- Normal constructor for the Pane class
 --- @return Pane a new Pane
 function Pane.new(x, y, width, height)
-    return Pane.new(x,y,width,height, true)
+    return Pane.new(x, y, width, height, true)
 end
 
 --- Constructor for the Pane, with an extra isVisible field to set the default visibility
@@ -56,7 +56,10 @@ function Pane:draw()
         gpu.setBackground(0x000000, false)
         gpu.fill(self.x, self.y, self.width, self.height, " ")
         for _, item in ipairs(self.content) do
-            item:draw()
+            if (item.x >= self.x - 1 and item.x + item.width <= self.x + self.width - 1
+                    and item.y >= self.y - 1 and item.y + item.height <= self.y + self.height - 1 ) then
+                item:draw()
+            end
         end
     end
 end
