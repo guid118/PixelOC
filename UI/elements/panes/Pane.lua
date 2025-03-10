@@ -42,7 +42,7 @@ end
 
 --- Set this pane to visible, if the draw function is called while the pane is not visible, it will not draw anything.
 ---@param value boolean true if the pane should be visible, false otherwise.
-function Pane:setVisible(value)
+function Pane:setEnabled(value)
     self.isEnabled = value
     if (value == true) then
         self:draw()
@@ -66,20 +66,22 @@ end
 
 --- Getter for the isEnabled value
 --- @return boolean if the pane is visible or not
-function Pane:getVisbible()
+function Pane:getEnabled()
     return self.isEnabled
 end
 
 --- Get the clickable that is at the given coordinates
 --- @return Clickable of the pane at the given coordinates.
 function Pane:getClickableAt(x, y)
-    if (self:isCoordinateInRegion(x, y)) then
-        for _, item in ipairs(self.content) do
-            if (ElementUtils.inheritsFrom(item, Pane)) then
-                return item:getClickableAt(x, y)
-            elseif ElementUtils.inheritsFrom(item, Clickable) then
-                if (item:isCoordinateInRegion(x, y)) then
-                    return item
+    if (self.isEnabled) then
+        if (self:isCoordinateInRegion(x, y)) then
+            for _, item in ipairs(self.content) do
+                if (ElementUtils.inheritsFrom(item, Pane)) then
+                    return item:getClickableAt(x, y)
+                elseif ElementUtils.inheritsFrom(item, Clickable) then
+                    if (item:isCoordinateInRegion(x, y)) then
+                        return item
+                    end
                 end
             end
         end
