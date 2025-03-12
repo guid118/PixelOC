@@ -32,11 +32,11 @@ end
 
 --- Add a region inheriting class to the pane
 --- Coordinates of the region will be local coordinates in the pane (so region.x = region.x + pane.x and the same for y)
---- Given argument MUST INHERIT FROM REGION, or this will cause a crash when drawn!
+--- Given argument MUST INHERIT FROM REGION, or this will cause a crash!
 --- @param RegionInheritor Region to add to the pane.
 function Pane:add(RegionInheritor)
-    RegionInheritor.x = RegionInheritor.x + self.x - 1
-    RegionInheritor.y = RegionInheritor.y + self.y - 1
+    RegionInheritor:setX(RegionInheritor.x + self.x - 1)
+    RegionInheritor:setY(RegionInheritor.y + self.y - 1)
     table.insert(self.content, RegionInheritor)
 end
 

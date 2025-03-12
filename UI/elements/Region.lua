@@ -44,4 +44,13 @@ function Region:unregisterListeners()
     end
 end
 
+
+function Region:setX(x)
+    self.x = x
+end
+
+function Region:setY(y)
+    self.y = y
+end
+
 return Region
