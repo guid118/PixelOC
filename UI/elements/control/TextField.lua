@@ -148,7 +148,6 @@ end
 --- Handles clicking the TextField
 function TextField:onClick()
     -- if we're already focussed, do nothing
-    -- TODO add cursor navigation
     if (self.focused) then
         return
     end
