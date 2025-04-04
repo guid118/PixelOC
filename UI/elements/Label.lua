@@ -26,4 +26,17 @@ function Label:draw()
     gpu.setBackground(0x000000, false)  -- Reset background
 end
 
+function ColoredRegion:drawToBuffer(index)
+    gpu.setActiveBuffer(index)
+    ColoredRegion.drawToBuffer(self)
+    gpu.setForeground(0xFFFFFF)
+    gpu.set(
+            math.floor((self.x + self.width / 2) - (#self.label / 2)),
+            math.floor(self.y + self.height / 2),
+            self.label
+    )
+    gpu.setBackground(0x000000, false)  -- Reset background
+    gpu.setActiveBuffer(0)
+end
+
 return Label

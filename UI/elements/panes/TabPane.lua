@@ -19,10 +19,9 @@ function TabPane.new(x, y, width, height, tabHeight)
     obj.tabHeight = tabHeight
     obj.tabPane = Pane.new(x, y, width, tabHeight, true)
     obj.contentPane = Pane.new(x, y + tabHeight, width, height, true)
-    obj.currentTabButton = ToggleButton.new(1,1,1,1, nil, nil, nil, nil, nil, nil, nil)
+    obj.currentTabButton = ToggleButton.new(1,1,1,1,0x000000, false, "", function() end)
     table.insert(obj.content, obj.tabPane)
     table.insert(obj.content, obj.contentPane)
-
     return obj
 end
 
@@ -36,7 +35,7 @@ function TabPane:addTab(button, contentPane)
     button.width = button.label:len() + 2
     button.height = self.tabHeight
     if (#self.tabPane.content == 0) then
-        button:toggleEnabled()
+        self.currentTabButton = button
     end
     self.tabPane:add(button)
     contentPane.x = self.x
@@ -60,11 +59,6 @@ function TabPane:addTab(button, contentPane)
             item.x = item.x + self.contentPane.x - 1
             item.y = item.y + self.contentPane.y - 1
         end
-    end
-
-    if (#self.tabPane.content == 1) then
-        button:toggleEnabled()
-        self.contentPane = contentPane
     end
 end
 

@@ -21,6 +21,12 @@ function ColoredRegion:draw()
     gpu.fill(self.x, self.y, self.width, self.height, " ")
 end
 
+function ColoredRegion:drawToBuffer(index)
+    gpu.setActiveBuffer(index)
+    self:draw()
+    gpu.setActiveBuffer(0)
+end
+
 --- Set the background color and palette mode
 ---@param color number
 ---@param isPalette boolean|nil
