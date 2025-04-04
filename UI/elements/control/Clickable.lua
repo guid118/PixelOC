@@ -6,11 +6,11 @@ Clickable.__index = Clickable
 
 --- any class extending Clickable must implement the onClick method
 function Clickable:onClick()
-    print("NOT IMPLEMENTED")
+    print("CLICK NOT IMPLEMENTED")
 end
 --- any class extending Clickable must implement the setOnClick method
 function Clickable:setOnClick(operation)
-    print("NOT IMPLEMENTED")
+    print("SET CLICK NOT IMPLEMENTED")
 end
 
 return Clickable
