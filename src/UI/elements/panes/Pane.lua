@@ -3,6 +3,7 @@
 
 local OOP = require("UI.OOP")
 local ColoredRegion = require("UI.elements.ColoredRegion")
+local Logger = require("UI.lib.Logger")
 
 
 local Pane = OOP.class("Pane", ColoredRegion)

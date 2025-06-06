@@ -129,11 +129,10 @@ local function _initDraggableFlowElement(elementsToReturn, currentYPos, spacing)
     local yPos = currentYPos
 
     local boundsVis = ColoredRegion:new(1, yPos, 40, 8, ColorUtils:new(0x303030, false))
-    local knobVis = ColoredRegion:new(boundsVis.x + 2, yPos + 1, 8, boundsVis.height - 2, ColorUtils:new(0x007ACC, false))
-    local draggableElement = Draggable:new(knobVis, boundsVis)
+    local knobVis = ColoredRegion:new(1, 1, 8, boundsVis.height - 2, ColorUtils:new(0x007ACC, false))
+    local draggableElement = Draggable:new(boundsVis, knobVis)
     draggableElement.onDragMove = onDraggableMove
     draggableElement.onDragDrop = onDraggableDrop
-    draggableElement.onBoundsClickMove = onDraggableBoundsClick
     table.insert(elementsToReturn, draggableElement)
     yPos = yPos + boundsVis.height + spacing
 
@@ -163,10 +162,9 @@ local function _initTopRightLegacyPane(elementsToReturn, screenWidth)
 
     local draggableBoundsVis = ColoredRegion:new(2, paneChildButton.y + paneChildButton.height + 1, paneWidth - 4, 5, ColorUtils:new(0x303030, false))
     local draggableKnobVis = ColoredRegion:new(draggableBoundsVis.x + 1, draggableBoundsVis.y + 1, 8, draggableBoundsVis.height - 2, ColorUtils:new(0x007ACC, false))
-    local innerDraggable = Draggable:new(draggableKnobVis, draggableBoundsVis)
+    local innerDraggable = Draggable:new(draggableBoundsVis, draggableKnobVis)
     innerDraggable.onDragMove = onDraggableMove
     innerDraggable.onDragDrop = onDraggableDrop
-    innerDraggable.onBoundsClickMove = onDraggableBoundsClick
     testPane:addChild(innerDraggable)
 
     table.insert(elementsToReturn, testPane)
@@ -178,14 +176,31 @@ local function _initStandaloneScrollBar(elementsToReturn)
     local scrollBarY = 1
     local scrollBarWidth = 3
     local scrollBarHeight = 20
-    local sbBgColor = ColorUtils:new(0x333333, false)
-    local sbThumbColor = ColorUtils:new(0x888888, false)
-    local sbButtonColor = ColorUtils:new(0x555555, false)
+    local sbBgColor = ColorUtils:new(0x333333, false)    -- For ScrollBar component background
+    local sbThumbColor = ColorUtils:new(0x888888, false) -- For Thumb
+    local sbButtonColor = ColorUtils:new(0x555555, false) -- For Buttons
+
+    -- Prepare the colors table for the new ScrollBar constructor
+    local scrollBarComponentColors = {
+        background = sbBgColor,                        -- ScrollBar's own background
+        track      = ColorUtils:new(0x404040, false),  -- Default distinct track color
+        thumb      = sbThumbColor,                     -- Thumb color
+        button     = sbButtonColor,                    -- Button color
+        buttonText = ColorUtils:new(0xFFFFFF, false)   -- Default button text color
+    }
+
+    -- The scrollBarChanged callback function should be defined elsewhere in your UITest file.
+    -- For example: local function scrollBarChanged(scrollbar, newValue) print("Standalone Scrollbar:", newValue) end
 
     local myScrollBar = ScrollBar:new(
-            scrollBarX, scrollBarY, scrollBarWidth, scrollBarHeight,
-            3, 4, 200, 20,
-            sbBgColor, sbThumbColor, sbButtonColor
+            scrollBarX, scrollBarY, scrollBarWidth, scrollBarHeight, -- x, y, width, height
+            "vertical",                                -- orientation
+            scrollBarComponentColors,                  -- colors table
+            0,                                         -- minValue (defaulted)
+            200,                                       -- maxValue (from old 7th param)
+            20,                                        -- initialValue (from old 8th param)
+            3,                                         -- stepValue (from old 5th param)
+            scrollBarChanged                           -- onValueChangedCallback
     )
     myScrollBar.onValueChanged = scrollBarChanged
     table.insert(elementsToReturn, myScrollBar)
@@ -222,32 +237,73 @@ local function _initMainTabPaneWithScrollPane(elementsToReturn, currentYPos, spa
     local tab2Button = Button:new(2, 4, 18, 3, ColorUtils:new(0x008800, false), "Do Something", ColorUtils:new(0xFFFFFF, false),
             function() tab2Label:setText("T2 Clicked!") os.sleep(0.5) tab2Label:setText("Settings (Tab 2)") end)
     tab2Content:addChild(tab2Button)
+    local textFieldX = 2
+    local textFieldY = tab2Button.y + tab2Button.height + 1 -- Position it below the button with 1 row spacing
+    local textFieldWidth = 30 -- Or tab1ContentWidth - textFieldX - 1 if you want it to span more
+    local textFieldHeight = 3 -- Standard height for a text field with a border, or 1 if just a line
+    local textFieldBgColor = ColorUtils:new(0x3A3A3A, false) -- A dark background for the text field
+    local textFieldInitialText = "Type here..."
+    local textFieldTextColor = ColorUtils:new(0xE0E0E0, false) -- Light text color
+    local textFieldMaxLength = 25
+
+    -- Ensure the TextField fits within the tab content area height
+    if textFieldY + textFieldHeight -1 > tab1ContentHeight then
+        Logger.warn("TextField might be too tall or positioned too low for tab2Content.")
+        -- You might want to adjust textFieldY or textFieldHeight here, or make tab1ContentHeight larger
+        textFieldHeight = math.max(1, tab1ContentHeight - textFieldY + 1) -- Adjust height to fit
+    end
+
+    if textFieldWidth > 0 and textFieldHeight > 0 then -- Only add if dimensions are valid
+        local settingsTextField = TextField:new(
+                textFieldX,
+                textFieldY,
+                textFieldWidth,
+                textFieldHeight,
+                textFieldBgColor,
+                textFieldInitialText,
+                textFieldTextColor,
+                textFieldMaxLength
+        )
+        tab2Content:addChild(settingsTextField)
+    else
+        Logger.warn("Skipping TextField creation due to invalid dimensions for tab2Content.")
+    end
     tabPaneInstance:addTab("Settings", tab2Content)
 
+
+
     -- Create ScrollPane Tab (Tab 3)
+    local scrollBarSpecificColors = {
+        background = ColorUtils:new(0x333333, false),  -- Default from ScrollPane's definition for scrollBarColors.background
+        track      = ColorUtils:new(0x404040, false),  -- Mapped from old 'bgColor'
+        thumb      = ColorUtils:new(0x909090, false),  -- Mapped from old 'thumbColor'
+        button     = ColorUtils:new(0x606060, false),  -- Mapped from old 'buttonColor'
+        buttonText = ColorUtils:new(0xFFFFFF, false)   -- Default from ScrollPane's definition for scrollBarColors.buttonText
+    }
+
     local scrollPaneForTab = ScrollPane:new(
-            1, 1, -- Relative to TabPane's content area (which is 1,1 for children of TabPane)
+            1, 1, -- Relative to TabPane's content area
             tab1ContentWidth, tab1ContentHeight, -- ScrollPane takes full content area of the tab
-            ColorUtils:new(0x252525, false), -- ScrollPane's own background
+            ColorUtils:new(0x252525, false), -- ScrollPane's own background color
             3, -- Scrollbar width
-            { bgColor = ColorUtils:new(0x404040, false), thumbColor = ColorUtils:new(0x909090, false), buttonColor = ColorUtils:new(0x606060, false) }
+            scrollBarSpecificColors -- The fully defined scrollBarColors table
     )
 
     -- Create the tall content for the ScrollPane
-    local scrollableContentHeight = 50 -- Make this taller than scrollPaneForTab's view height
+    local scrollableContentHeight = 100 -- Make this taller than scrollPaneForTab's view height
     local scrollableContent = Pane:new(
             1, 1, -- Relative to ScrollPane's content view area
-            scrollPaneForTab.contentViewWidth, -- Width should match ScrollPane's contentViewWidth
+            scrollPaneForTab:getContentViewWidth(), -- Changed: Added ()
             scrollableContentHeight,
             ColorUtils:new(0x303040, false)
     )
     local itemY = 1
-    for i = 1, 15 do
-        local itemLabel = Label:new(2, itemY, scrollableContent.width - 4, 1, scrollableContent.color, "Scrollable Item #" .. i, ColorUtils:new(0xCCCCCC, false))
+    for i = 1, 25 do
+        local itemLabel = Label:new(2, itemY, scrollPaneForTab:getContentViewWidth(), 1, scrollableContent.color, "Scrollable Item #" .. i, ColorUtils:new(0xCCCCCC, false))
         scrollableContent:addChild(itemLabel)
         itemY = itemY + 2
         if i % 3 == 0 then
-            local itemButton = Button:new(5, itemY, scrollableContent.width - 10, 3, ColorUtils:new(0x5C5C8A, false), "Btn " .. i, ColorUtils:new(0xFFFFFF, false),
+            local itemButton = Button:new(5, itemY, scrollPaneForTab:getContentViewWidth(), 3, ColorUtils:new(0x5C5C8A, false), "Btn " .. i, ColorUtils:new(0xFFFFFF, false), -- Changed: Added ()
                     function(btn) local orig = btn:getText() btn:setText("Active " .. i) os.sleep(0.3) btn:setText(orig) end
             )
             scrollableContent:addChild(itemButton)
@@ -302,6 +358,7 @@ local uiElements = initUI()
 
 --region Main Loop & Event Handling
 local function drawAll()
+    gpu.freeAllBuffers()
     gpu.setBackground(0x202020, false) -- Main background
     local screenWidth, screenHeight = gpu.getResolution()
     gpu.fill(1, 1, screenWidth, screenHeight, " ")
@@ -314,6 +371,7 @@ local function drawAll()
 end
 
 local function redrawDirtyElements()
+    gpu.freeAllBuffers()
     for _, element in ipairs(uiElements) do
         if element and element.needsRedraw and type(element.draw) == "function" then
             element:draw(gpu)
@@ -351,7 +409,6 @@ local function shutdown()
         pcall(function() gpu.setActiveBuffer(0) end)
     end
     local width, height = gpu.getResolution()
-    gpu.fill(1,1,width, height, " ")
     print("UITest finished.")
 end
 
@@ -387,13 +444,13 @@ local function main()
                 pcall(function() gpu.setActiveBuffer(0) end)
             end
             local width, height = gpu.getResolution()
-            gpu.fill(1,1,width, height, " ")
+            gpu.fill(1, 1, width, height, " ")
             print("Error occurred:")
-            print(tostring(err_msg))
-            print(debug.traceback())
+            print(debug.traceback(err_msg, 2))
         end)
         return err_msg
     end)
+
     shutdown()
     if not ok then
         print("Program terminated due to an error: " .. tostring(err))

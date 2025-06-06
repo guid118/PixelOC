@@ -37,6 +37,8 @@ function TabPane:initialize(x, y, width, height, color, tabHeight, tabButtonColo
         Logger.warn("TabPane: Tab bar height is zero or negative. Tabs might not render correctly.")
         self.tabBarHeight = 1 -- Ensure minimum 1 pixel
     end
+    self.contentArea = Pane:new(1, self.tabBarHeight, self.contentAreaWidth, self.contentAreaHeight)
+    self.contentArea.parent = self
 end
 
 function TabPane:addTab(tabName, contentPane)
@@ -51,7 +53,9 @@ function TabPane:addTab(tabName, contentPane)
             self.tabButtonColor,
             tabName,
             self.tabButtonTextColor,
-            function() self:setActiveTab(tabName) end
+            function()
+                self:setActiveTab(tabName)
+            end
     )
     tabButton.parent = self -- For redraw propagation if button changes state
 
@@ -62,7 +66,7 @@ function TabPane:addTab(tabName, contentPane)
     }
     table.insert(self.tabOrder, tabName)
 
-    contentPane.parent = self -- For redraw propagation and coordinate context
+    contentPane.parent = self.contentArea -- For redraw propagation and coordinate context
 
     if not self.activeTabName then
         self:setActiveTab(tabName)
@@ -76,7 +80,9 @@ function TabPane:addTab(tabName, contentPane)
 end
 
 function TabPane:_layoutTabs()
-    if #self.tabOrder == 0 then return end
+    if #self.tabOrder == 0 then
+        return
+    end
 
     local totalButtonWidth = 0
     for _, tabName in ipairs(self.tabOrder) do
@@ -90,7 +96,8 @@ function TabPane:_layoutTabs()
     for i, tabName in ipairs(self.tabOrder) do
         local tabData = self.tabs[tabName]
         local w = math.floor(actualButtonWidth)
-        if i == #self.tabOrder then -- Last button takes remaining space
+        if i == #self.tabOrder then
+            -- Last button takes remaining space
             w = self.tabBarX + self.tabBarWidth - currentX
         end
 
@@ -132,6 +139,7 @@ function TabPane:setActiveTab(tabName)
         newTabData.contentPane:setNeedsRedraw(true)
     end
 
+    self.contentArea.children = { newTabData.contentPane }
     self:setNeedsRedraw(true)
 end
 
@@ -206,6 +214,7 @@ function TabPane:draw(gpu)
 
     gpu.setBackground(pGpuBgColor, pGpuBgPalette) -- Restore original GPU background
     self:setNeedsRedraw(false)
+    self.contentArea:setNeedsRedraw(false)
 end
 
 function TabPane:onClick(clickX, clickY)
@@ -221,15 +230,8 @@ function TabPane:onClick(clickX, clickY)
     -- Check content area if no tab button was clicked
     if clickX >= self.contentAreaX and clickX < self.contentAreaX + self.contentAreaWidth and
             clickY >= self.contentAreaY and clickY < self.contentAreaY + self.contentAreaHeight then
-
-        local activePane = self:getActiveContentPane()
-        if activePane and type(activePane.onClick) == "function" then
-            -- Translate click coordinates to be relative to the activePane's drawing origin (1,1 within contentArea)
-            local relativeToContentX = clickX - self.contentAreaX + 1
-            local relativeToContentY = clickY - self.contentAreaY + 1
-            activePane:onClick(relativeToContentX, relativeToContentY)
-            return
-        end
+        local localX, localY = clickX - self.x, clickY - self.y
+        self.contentArea:onClick(localX, localY)
     end
     -- Potentially call Pane.super.onClick(self, clickX, clickY) if TabPane itself should react to clicks on its frame
 end
@@ -250,17 +252,18 @@ function TabPane:unregisterListeners()
 end
 
 function TabPane:setNeedsRedraw(needsRedraw)
-    if self.needsRedraw == needsRedraw and self.needsRedraw ~= nil then return end
+    if self.needsRedraw == needsRedraw and self.needsRedraw ~= nil then
+        return
+    end
     TabPane.super.setNeedsRedraw(self, needsRedraw) -- Call Region's setNeedsRedraw
 
     if self.needsRedraw and self.tabs then
         for _, tabData in pairs(self.tabs) do
-            if tabData.button then tabData.button:setNeedsRedraw(true) end
+            if tabData.button then
+                tabData.button:setNeedsRedraw(true)
+            end
         end
-        local activeContent = self:getActiveContentPane()
-        if activeContent and activeContent.setNeedsRedraw then
-            activeContent:setNeedsRedraw(true)
-        end
+        self.contentArea:setNeedsRedraw(needsRedraw)
     end
 end
 

@@ -2,7 +2,7 @@
 
 local OOP = require("UI.OOP")
 local event = require("event")
-
+local Logger = require("UI.lib.Logger")
 local Region = OOP.class("Region")
 
 -- if you're gonna add these to a pane, (be that a normal pane, tabpane, scrollpane or otherwise), use relative coordinates.
@@ -44,26 +44,23 @@ function Region:setNeedsRedraw(needsRedraw)
     end
 end
 
--- Calculates the absolute screen position of this region's (1,1) origin
-function Region:getAbsolutePosition()
-    if not self.parent then
-        return self.x, self.y -- Base case: Region is top-level, x & y are absolute.
+function Region:getGlobalCoordinates()
+    if not self.parent or not (type(self.parent.getGlobalCoordinates) == "function") then
+        --Logger.debug("Found top-level parent: " .. self.__name)
+        --Logger.debug("Starting with coordinates: " .. self.x .. ", " .. self.y)
+        return self.x, self.y
     end
-    -- self.x, self.y are 1-based relative offsets from the parent's content area origin.
-    -- parent:getAbsolutePosition() returns absolute screen coords of parent's origin.
-    local parentAbsX, parentAbsY = self.parent:getAbsolutePosition()
-    return parentAbsX + self.x - 1, parentAbsY + self.y - 1 -- Corrected logic
+    local parentAbsX, parentAbsY = self.parent:getGlobalCoordinates()
+    --Logger.debug("determining coordinates, step: " .. self.__name)
+    --Logger.debug("Current coordinates: " .. parentAbsX .. ", " .. parentAbsY)
+    return parentAbsX + self.x - 1, parentAbsY + self.y - 1
 end
 
--- Converts global screen coordinates to coordinates local to this region's (1,1) origin
-function Region:getGlobalToLocalCoordinates(globalX, globalY)
-    local regionGlobalX, regionGlobalY = self:getAbsolutePosition()
-    -- Converts global screen coords to 1-based local coords for this region.
-    -- E.g., a click on regionGlobalX, regionGlobalY becomes (1,1) locally.
-    local localX = globalX - regionGlobalX + 1
-    local localY = globalY - regionGlobalY + 1
-    return localX, localY
+function Region:globalToLocal(globalX, globalY)
+    local regionGlobalX, regionGlobalY = self:getGlobalCoordinates()
+    return globalX - regionGlobalX + 1, globalY - regionGlobalY + 1
 end
+
 
 return Region
 --- END OF FILE Region.txt ---
