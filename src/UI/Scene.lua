@@ -24,22 +24,22 @@ end
 
 --region drawing (These functions use module-level variables)
 local function drawAll()
-    gpu.freeAllBuffers()
     gpu.setBackground(0x202020, false) -- Main background
     local screenWidth, screenHeight = gpu.getResolution()
     gpu.fill(1, 1, screenWidth, screenHeight, " ")
 
     for _, element in ipairs(_activeSceneUiElements) do -- Use module-level variable
         if element and type(element.draw) == "function" then
+            gpu.freeAllBuffers()
             element:draw(gpu)
         end
     end
 end
 
 local function redrawDirtyElements()
-    gpu.freeAllBuffers()
     for _, element in ipairs(_activeSceneUiElements) do -- Use module-level variable
         if element and element.needsRedraw and type(element.draw) == "function" then
+            gpu.freeAllBuffers()
             element:draw(gpu)
         end
     end
