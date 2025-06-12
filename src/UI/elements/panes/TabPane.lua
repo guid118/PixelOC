@@ -5,7 +5,7 @@ local ColorUtils = require("UI.lib.ColorUtils")
 local Logger = require("UI.lib.Logger")
 
 local TabPane = OOP.class("TabPane", Pane)
-
+--TODO figure out why clicks are off by 1 on the X (not the case on Y values, but I think that is not tested either)
 function TabPane:initialize(x, y, width, height, color, tabHeight, tabButtonColor, tabButtonTextColor, activeTabButtonColor)
     Pane.super.initialize(self, x, y, width, height, color) -- The overall TabPane area
 
@@ -230,7 +230,7 @@ function TabPane:onClick(clickX, clickY)
     -- Check content area if no tab button was clicked
     if clickX >= self.contentAreaX and clickX < self.contentAreaX + self.contentAreaWidth and
             clickY >= self.contentAreaY and clickY < self.contentAreaY + self.contentAreaHeight then
-        local localX, localY = clickX - self.x, clickY - self.y
+        local localX, localY = clickX - self.x + 1, clickY - self.y + 1
         self.contentArea:onClick(localX, localY)
     end
     -- Potentially call Pane.super.onClick(self, clickX, clickY) if TabPane itself should react to clicks on its frame
