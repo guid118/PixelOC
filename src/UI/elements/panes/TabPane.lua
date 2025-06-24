@@ -38,6 +38,7 @@ function TabPane:initialize(x, y, width, height, color, tabHeight, tabButtonColo
     end
     self.contentArea = Pane:new(1, self.tabBarHeight, self.contentAreaWidth, self.contentAreaHeight)
     self.contentArea.parent = self
+    self.tabSwitchListener = nil
 end
 
 function TabPane:addTab(tabName, contentPane)
@@ -140,6 +141,9 @@ function TabPane:setActiveTab(tabName)
 
     self.contentArea.children = { newTabData.contentPane }
     self:setNeedsRedraw(true)
+    if self.tabSwitchListener then
+        self.tabSwitchListener(self.activeTabName)
+    end
 end
 
 function TabPane:getActiveTabName()
